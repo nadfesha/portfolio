@@ -11,8 +11,8 @@ const ContactPage = () => {
   }, []);
 
   return (
-    <div className="px-[5%] sm:px-[5%] lg:px-[10%] " >
-      <div className="text-center lg:mt-[5%] mt-10 mb-2 sm:px-0 px-[5%]">
+    <div className="px-[5%] sm:px-[5%] lg:px-[10%]">
+      <div className="text-center lg:mt-[5%] mt-10 mb-10">
         <h2
           data-aos="fade-down"
           data-aos-duration="1000"
