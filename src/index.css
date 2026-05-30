@@ -15,7 +15,7 @@
 html,
 body {
 	overflow-x: hidden;
-	background: #030014;
+	background: #1a1a2e;
 	scroll-behavior: smooth !important;
 }
 
@@ -50,7 +50,7 @@ body {
   }
   
   ::-webkit-scrollbar-track {
-	background: rgba(3, 0, 20, 0.4);
+	background: rgba(26, 26, 46, 0.4);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 	border: 1px solid rgba(99, 102, 241, 0.1);
@@ -110,7 +110,7 @@ body {
   
 /*   @media (prefers-color-scheme: dark) {
 	::-webkit-scrollbar-track {
-	  background: rgba(3, 0, 20, 0.6);
+	  background: rgba(26, 26, 46, 0.6);
 	}
   } */
 

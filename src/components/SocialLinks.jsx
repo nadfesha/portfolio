@@ -87,10 +87,10 @@ const SocialLinks = () => {
   return (
     <div className="w-full bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 py-8 backdrop-blur-xl">
       <h3
-        className="text-xl font-semibold text-white mb-6 flex items-center gap-2"
+        className="text-xl font-semibold text-white mb-2 flex items-center gap-2"
         data-aos="fade-down"
       >
-        <span className="inline-block w-8 h-1 bg-indigo-500 rounded-full"></span>
+        <span className="inline-block w-8 h-1 bg-pink-500 rounded-full"></span>
         Connect With Me
       </h3>
 

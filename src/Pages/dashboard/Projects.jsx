@@ -315,7 +315,7 @@ const ProjectForm = ({
         </button>
         <button type="submit" disabled={uploading} className="relative group/s">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" />
-          <div className="relative flex items-center gap-2 px-5 py-2 bg-[#030014] rounded-xl border border-white/10">
+          <div className="relative flex items-center gap-2 px-5 py-2 bg-[#1a1a2e] rounded-xl border border-white/10">
             {uploading ? (
               <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             ) : (
@@ -421,7 +421,7 @@ export default function Projects() {
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-50" />
-            <div className="relative w-9 h-9 bg-[#030014] rounded-xl border border-white/15 flex items-center justify-center">
+            <div className="relative w-9 h-9 bg-[#1a1a2e] rounded-xl border border-white/15 flex items-center justify-center">
               <FolderGit2 className="w-4 h-4 text-indigo-400" />
             </div>
           </div>
@@ -440,7 +440,7 @@ export default function Projects() {
           className="relative group shrink-0"
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-50 blur group-hover:opacity-80 transition duration-300" />
-          <div className="relative flex items-center gap-2 px-4 py-2.5 bg-[#030014] rounded-xl border border-white/10">
+          <div className="relative flex items-center gap-2 px-4 py-2.5 bg-[#1a1a2e] rounded-xl border border-white/10">
             <Plus className="w-4 h-4 text-indigo-400" />
             <span className="text-sm text-gray-200">New Project</span>
           </div>

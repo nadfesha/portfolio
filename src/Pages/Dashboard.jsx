@@ -28,7 +28,7 @@ export default function Dashboard() {
       <div className="flex items-center gap-3 px-1 shrink-0">
         <div className="relative">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-50" />
-          <div className="relative w-9 h-9 bg-[#030014] rounded-xl border border-white/15 flex items-center justify-center">
+          <div className="relative w-9 h-9 bg-[#1a1a2e] rounded-xl border border-white/15 flex items-center justify-center">
             <LayoutDashboard className="w-4 h-4 text-indigo-400" />
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function Dashboard() {
               onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium shrink-0 ${
                 active
-                  ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/15 border border-indigo-500/30 text-white'
+                  ? 'bg-gradient-to-r from-pink-500/20 to-yellow-500/15 border border-pink-500/30 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
               }`}
             >

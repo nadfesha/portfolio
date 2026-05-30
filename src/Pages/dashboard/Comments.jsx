@@ -101,7 +101,7 @@ export default function Comments() {
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-50 pointer-events-none" />
-            <div className="relative w-9 h-9 bg-[#030014] rounded-xl border border-white/15 flex items-center justify-center">
+            <div className="relative w-9 h-9 bg-[#1a1a2e] rounded-xl border border-white/15 flex items-center justify-center">
               <MessageSquare className="w-4 h-4 text-indigo-400" />
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function Comments() {
               onClick={() => setFilter(tab.value)}
               className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm transition-all duration-200 ${
                 filter === tab.value
-                  ? "bg-gradient-to-r from-indigo-500/25 to-purple-500/20 border border-indigo-500/35 text-white font-medium"
+                  ? "bg-gradient-to-r from-pink-500/25 to-yellow-500/20 border border-pink-500/35 text-white font-medium"
                   : "text-gray-500 hover:text-gray-300"
               }`}
             >
@@ -149,7 +149,7 @@ export default function Comments() {
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: "Total", value: comments.length, color: "text-indigo-400" },
-          { label: "Pinned", value: pinnedCount, color: "text-purple-400" },
+          { label: "Pinned", value: pinnedCount, color: "text-yellow-400" },
           {
             label: "Unpinned",
             value: comments.length - pinnedCount,

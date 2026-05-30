@@ -16,13 +16,13 @@ const ContactPage = () => {
         <h2
           data-aos="fade-down"
           data-aos-duration="1000"
-          className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]"
+          className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#EC4899] to-[#FBBF24]"
         >
           <span
             style={{
-              color: "#6366f1",
-              backgroundImage:
-                "linear-gradient(45deg, #6366f1 10%, #a855f7 93%)",
+              color: "#EC4899",
+                backgroundImage:
+                  "linear-gradient(45deg, #EC4899 10%, #FBBF24 93%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -41,17 +41,15 @@ const ContactPage = () => {
       </div>
 
       <div
-        className="h-auto py-20 flex items-center justify-center"
+        className="h-auto py-10 flex items-center justify-center"
         id="Contact"
       >
         <div
           data-aos="zoom-in"
           data-aos-duration="1000"
-          className="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 transform transition-all duration-500 hover:shadow-[#6366f1]/10"
+          className="w-full max-w-5xl bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 transform transition-all duration-500 hover:shadow-[#EC4899]/10"
         >
-          <div className="flex justify-center">
-            <SocialLinks />
-          </div>
+          <SocialLinks />
         </div>
       </div>
     </div>

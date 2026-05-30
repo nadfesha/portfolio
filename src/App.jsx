@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import Navbar from "./components/Navbar";
@@ -8,6 +8,7 @@ import About from "./Pages/About";
 import AnimatedBackground from "./components/Background";
 import { AnimatePresence } from "framer-motion";
 import Footer from "./components/Footer";
+import { supabase } from "./supabase";
 
 import Login from "./Pages/Login";
 import Dashboard from "./Pages/Dashboard";
@@ -59,6 +60,32 @@ const ProjectPageLayout = () => (
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
 
+  // Fetch portfolio data at app level - runs once before any pages render
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      try {
+        const [projectsResponse, certificatesResponse] = await Promise.all([
+          supabase.from("projects").select("*").order('id', { ascending: false }),
+          supabase.from("certificates").select("*").order('id', { ascending: false }),
+        ]);
+
+        if (projectsResponse.error) throw projectsResponse.error;
+        if (certificatesResponse.error) throw certificatesResponse.error;
+
+        const projectData = projectsResponse.data || [];
+        const certificateData = certificatesResponse.data || [];
+
+        // Store in localStorage so it's available for all pages
+        localStorage.setItem("projects", JSON.stringify(projectData));
+        localStorage.setItem("certificates", JSON.stringify(certificateData));
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error.message);
+      }
+    };
+
+    fetchPortfolioData();
+  }, []);
+
   return (
     
     <HelmetProvider>
@@ -78,7 +105,7 @@ function App() {
             }
           />
 
-          <Route path="/project/:slug" element={<ProjectPageLayout />} />
+          <Route path="/project/:id" element={<ProjectPageLayout />} />
 
           {/* AUTH */}
           <Route path="/login" element={<Login />} />

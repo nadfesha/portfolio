@@ -90,7 +90,7 @@ export default function Login() {
 
               <button type="submit" disabled={loading} className="relative group/btn w-full mt-1">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-70 blur group-hover/btn:opacity-100 transition duration-300" />
-                <div className="relative h-11 bg-[#030014] rounded-xl border border-white/10 flex items-center justify-center gap-2 overflow-hidden">
+                <div className="relative h-11 bg-[#1a1a2e] rounded-xl border border-white/10 flex items-center justify-center gap-2 overflow-hidden">
                   <div className="absolute inset-0 scale-x-0 group-hover/btn:scale-x-100 origin-left transition-transform duration-500 bg-gradient-to-r from-[#4f52c9]/20 to-[#8644c5]/20" />
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
