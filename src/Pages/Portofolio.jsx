@@ -102,19 +102,20 @@ function a11yProps(index) {
   };
 }
 
-const techStacks = [
-  { icon: "html.svg", language: "HTML" },
-  { icon: "css.svg", language: "CSS" },
-  { icon: "javascript.svg", language: "JavaScript" },
-  { icon: "php.png", language: "PHP" },
-  { icon: "reactjs.svg", language: "ReactJS" },
-  { icon: "laravel.png", language: "Laravel" },
-  { icon: "bootstrap.svg", language: "Bootstrap" },
-  { icon: "python.png", language: "Python" },
-  { icon: "supabase.png", language: "Supabase" },
-  { icon: "vite.svg", language: "Vite" },
-  { icon: "github.png", language: "Git & GitHub" },
-  { icon: "docker.png", language: "Docker" },
+// Fallback kalau table tech_stacks belum ada / kosong
+const defaultTechStacks = [
+  { icon: "/html.svg", name: "HTML" },
+  { icon: "/css.svg", name: "CSS" },
+  { icon: "/javascript.svg", name: "JavaScript" },
+  { icon: "/php.png", name: "PHP" },
+  { icon: "/reactjs.svg", name: "ReactJS" },
+  { icon: "/laravel.png", name: "Laravel" },
+  { icon: "/bootstrap.svg", name: "Bootstrap" },
+  { icon: "/python.png", name: "Python" },
+  { icon: "/supabase.png", name: "Supabase" },
+  { icon: "/vite.svg", name: "Vite" },
+  { icon: "/github.png", name: "Git & GitHub" },
+  { icon: "/docker.png", name: "Docker" },
 ];
 
 export default function FullWidthTabs() {
@@ -122,6 +123,7 @@ export default function FullWidthTabs() {
   const [value, setValue] = useState(0);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
+  const [techStacks, setTechStacks] = useState(defaultTechStacks);
   const [showAllProjects, setShowAllProjects] = useState(false);
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const isMobile = window.innerWidth < 768;
@@ -162,6 +164,17 @@ export default function FullWidthTabs() {
   }, []);
 
 
+
+  useEffect(() => {
+    supabase
+      .from("tech_stacks")
+      .select("name, icon")
+      .order("sort_order", { ascending: true })
+      .order("id", { ascending: true })
+      .then(({ data, error }) => {
+        if (!error && data?.length) setTechStacks(data);
+      });
+  }, []);
 
   useEffect(() => {
     // Coba ambil dari localStorage dulu untuk laod lebih cepat
@@ -368,7 +381,7 @@ export default function FullWidthTabs() {
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                   >
-                    <TechStackIcon TechStackIcon={stack.icon} Language={stack.language} />
+                    <TechStackIcon TechStackIcon={stack.icon} Language={stack.name} />
                   </div>
                 ))}
               </div>
