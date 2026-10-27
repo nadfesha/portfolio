@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabase";
-import { UserCircle, Upload, Trash2, ImageIcon, RefreshCw } from "lucide-react";
+import {
+  UserCircle,
+  Upload,
+  Trash2,
+  ImageIcon,
+  RefreshCw,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
 
 export const DEFAULT_PROFILE_IMAGE = "/nadi.jpeg";
+export const DEFAULT_CV = "/resume.pdf";
 const BUCKET = "site-assets";
 const SETTING_KEY = "profile_image";
+const CV_SETTING_KEY = "cv_file";
 
 const Card = ({ children, className = "" }) => (
   <div className={`relative group ${className}`}>
@@ -20,6 +30,185 @@ const getStoragePath = (url) => {
   const marker = `/${BUCKET}/`;
   const idx = url?.indexOf(marker) ?? -1;
   return idx === -1 ? null : url.slice(idx + marker.length);
+};
+
+const CvSection = () => {
+  const [currentUrl, setCurrentUrl] = useState(null);
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const fetchCv = async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", CV_SETTING_KEY)
+      .maybeSingle();
+    setCurrentUrl(data?.value || null);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCv();
+  }, []);
+
+  const handleFileChange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.type !== "application/pdf") {
+      alert("Please choose a PDF file.");
+      return;
+    }
+    setFile(f);
+  };
+
+  const handleSave = async () => {
+    if (!file) return;
+    setSaving(true);
+    const fileName = `cv-${Date.now()}.pdf`;
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(fileName, file, { contentType: "application/pdf" });
+    if (uploadError) {
+      alert("Failed to upload CV: " + uploadError.message);
+      setSaving(false);
+      return;
+    }
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ key: CV_SETTING_KEY, value: data.publicUrl });
+    if (error) {
+      alert("Failed to save CV: " + error.message);
+      await supabase.storage.from(BUCKET).remove([fileName]);
+      setSaving(false);
+      return;
+    }
+
+    const oldPath = getStoragePath(currentUrl);
+    if (oldPath) await supabase.storage.from(BUCKET).remove([oldPath]);
+
+    setFile(null);
+    setSaving(false);
+    fetchCv();
+  };
+
+  const handleDelete = async () => {
+    if (!currentUrl) return;
+    if (!confirm("Delete CV? The default resume.pdf will be used instead.")) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("site_settings")
+      .delete()
+      .eq("key", CV_SETTING_KEY);
+    if (error) {
+      alert("Failed to delete CV: " + error.message);
+      setSaving(false);
+      return;
+    }
+    const path = getStoragePath(currentUrl);
+    if (path) await supabase.storage.from(BUCKET).remove([path]);
+    setSaving(false);
+    fetchCv();
+  };
+
+  return (
+    <Card className="max-w-xl mt-6">
+      <div className="p-6 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-white">CV / Resume</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Downloaded from the "Download CV" button on the About section
+            </p>
+          </div>
+          {!loading && (
+            <a
+              href={currentUrl || DEFAULT_CV}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-gray-400 hover:text-white text-xs transition-colors shrink-0"
+            >
+              <ExternalLink className="w-3.5 h-3.5" /> View current
+            </a>
+          )}
+        </div>
+
+        <p className="text-sm text-gray-400">
+          {loading
+            ? "Loading..."
+            : currentUrl
+              ? "Using your uploaded CV."
+              : "Using the default resume.pdf."}
+        </p>
+
+        <label className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-white/15 bg-[#0d0d22] cursor-pointer hover:border-indigo-500/50 transition-colors">
+          <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+            <FileText className="w-4 h-4 text-gray-500" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm text-gray-300 truncate">
+              {file ? file.name : currentUrl ? "Replace CV" : "Upload CV"}
+            </p>
+            <p className="text-xs text-gray-600 mt-0.5">PDF only</p>
+          </div>
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </label>
+
+        <div className="flex flex-wrap gap-2">
+          {file && (
+            <>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="relative group/s"
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-60 blur group-hover/s:opacity-100 transition duration-300" />
+                <div className="relative flex items-center gap-2 px-4 py-2 bg-[#1a1a2e] rounded-xl border border-white/10">
+                  {saving ? (
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4 text-indigo-400" />
+                  )}
+                  <span className="text-sm text-gray-200">
+                    {saving ? "Saving..." : "Save CV"}
+                  </span>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFile(null)}
+                disabled={saving}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-gray-400 hover:text-white text-sm transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Cancel
+              </button>
+            </>
+          )}
+          {currentUrl && !file && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={saving}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-500/20 text-red-400 hover:bg-red-500/10 text-sm transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete CV
+            </button>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
 };
 
 export default function Profile() {
@@ -127,7 +316,7 @@ export default function Profile() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white">Profile</h1>
           <p className="text-gray-500 text-xs">
-            Profile photo shown on the About section
+            Profile photo and CV shown on the About section
           </p>
         </div>
       </div>
@@ -227,6 +416,8 @@ export default function Profile() {
           </div>
         </div>
       </Card>
+
+      <CvSection />
     </div>
   );
 }

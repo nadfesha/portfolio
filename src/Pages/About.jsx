@@ -3,7 +3,7 @@ import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from 
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { supabase } from "../supabase"
-import { DEFAULT_PROFILE_IMAGE } from "./dashboard/Profile"
+import { DEFAULT_PROFILE_IMAGE, DEFAULT_CV } from "./dashboard/Profile"
 
 // Memoized Components
 const Header = memo(() => (
@@ -133,15 +133,20 @@ const AboutPage = () => {
   }, []);
 
   const [profileImage, setProfileImage] = useState(DEFAULT_PROFILE_IMAGE);
+  const [cvUrl, setCvUrl] = useState(DEFAULT_CV);
 
   useEffect(() => {
     supabase
       .from("site_settings")
-      .select("value")
-      .eq("key", "profile_image")
-      .maybeSingle()
+      .select("key, value")
+      .in("key", ["profile_image", "cv_file"])
       .then(({ data }) => {
-        if (data?.value) setProfileImage(data.value);
+        data?.forEach(({ key, value }) => {
+          if (!value) return;
+          if (key === "profile_image") setProfileImage(value);
+          // Atribut download tak jalan untuk URL domain lain, jadi guna ?download= dari Supabase
+          if (key === "cv_file") setCvUrl(`${value}?download=Nadiah_Farisha_CV.pdf`);
+        });
       });
   }, []);
 
@@ -259,7 +264,7 @@ const AboutPage = () => {
       </div>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
-              <a href="/resume.pdf" download className="w-full lg:w-auto">
+              <a href={cvUrl} download className="w-full lg:w-auto">
               <button 
                 data-aos="fade-up"
                 data-aos-duration="800"
