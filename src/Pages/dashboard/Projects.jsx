@@ -73,21 +73,31 @@ const SkeletonCard = () => (
 
 const ProjectCard = ({ project, onDelete, onEdit }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <Card>
       <div className="p-4 flex flex-col h-full">
         {project.img && (
-          <div className="w-full aspect-[16/8] rounded-xl mb-4 border border-white/8 overflow-hidden bg-white/5">
-            {!imgLoaded && (
-              <div className="w-full h-full animate-pulse bg-white/5" />
+          <div className="relative w-full aspect-[16/8] rounded-xl mb-4 border border-white/8 overflow-hidden bg-white/5">
+            {imgError ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <ImageIcon className="w-6 h-6 text-gray-600" />
+              </div>
+            ) : (
+              <>
+                {!imgLoaded && (
+                  <div className="w-full h-full animate-pulse bg-white/5" />
+                )}
+                <img
+                  src={project.img}
+                  alt={project.title}
+                  onLoad={() => setImgLoaded(true)}
+                  onError={() => setImgError(true)}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0 absolute inset-0"}`}
+                />
+              </>
             )}
-            <img
-              src={project.img}
-              alt={project.title}
-              onLoad={() => setImgLoaded(true)}
-              className={`w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0 absolute"}`}
-            />
           </div>
         )}
         <h3 className="font-semibold text-white text-sm mb-1">
@@ -353,8 +363,10 @@ export default function Projects() {
   }, []);
 
   const uploadImage = async (f) => {
-    const fileName = `${Date.now()}-${f.name}`;
-    await supabase.storage.from("project-images").upload(fileName, f);
+    const ext = f.name.split(".").pop().toLowerCase();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+    const { error } = await supabase.storage.from("project-images").upload(fileName, f);
+    if (error) throw error;
     const { data } = supabase.storage
       .from("project-images")
       .getPublicUrl(fileName);
@@ -364,7 +376,13 @@ export default function Projects() {
   const handleCreate = async (form, file) => {
     setUploading(true);
     let imgUrl = "";
-    if (file) imgUrl = await uploadImage(file);
+    try {
+      if (file) imgUrl = await uploadImage(file);
+    } catch (err) {
+      alert("Failed to upload image: " + err.message);
+      setUploading(false);
+      return;
+    }
     await supabase.from("projects").insert({
       title: form.Title,
       description: form.Description,
@@ -386,8 +404,14 @@ export default function Projects() {
   const handleEdit = async (form, file) => {
     setUploading(true);
     let imgUrl = editProject.img || "";
-    if (file) imgUrl = await uploadImage(file);
-    await supabase
+    try {
+      if (file) imgUrl = await uploadImage(file);
+    } catch (err) {
+      alert("Failed to upload image: " + err.message);
+      setUploading(false);
+      return;
+    }
+    const { error } = await supabase
       .from("projects")
       .update({
         title: form.Title,
@@ -403,6 +427,11 @@ export default function Projects() {
         github: form.Github,
       })
       .eq("id", editProject.id);
+    if (error) {
+      alert("Failed to update project: " + error.message);
+      setUploading(false);
+      return;
+    }
     setEditProject(null);
     setUploading(false);
     fetchProjects();
@@ -410,7 +439,8 @@ export default function Projects() {
 
   const deleteProject = async (id) => {
     if (!confirm("Delete this project?")) return;
-    await supabase.from("projects").delete().eq("id", id);
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) alert("Failed to delete project: " + error.message);
     fetchProjects();
   };
 

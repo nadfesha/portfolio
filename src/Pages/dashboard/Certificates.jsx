@@ -108,7 +108,8 @@ export default function Certificates() {
     if (!file) return
     setUploading(true)
     try {
-      const fileName = `cert-${Date.now()}-${file.name}`
+      const ext = file.name.split('.').pop().toLowerCase()
+      const fileName = `cert-${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`
       const uploadResult = await supabase.storage.from('certificate-images').upload(fileName, file)
       
       if (uploadResult.error) {
